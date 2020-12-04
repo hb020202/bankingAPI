@@ -15,7 +15,11 @@ let insertDataInDB = (db, dataToSend) => {
     let collection = db.collection('accounts');
     collection.insertOne(dataToSend);
 }
-
+//function to change amount in balance
+let updateBalance = (db, accHolder, updatedBalance) => {
+    let collection = db.collection('accounts');
+    collection.updateOne({accholder: accHolder}, {$set: {balance: updatedBalance}})
+}
 
 
 
@@ -43,6 +47,24 @@ app.post('/accounts', (req, res) => {
         })
     res.send('inserted');
 })
+
+//route to post new account balance to
+//POST localhost:x/accounts/balance - body - x-www... - key/value - send
+app.put('/accounts/balance', (req, res) => {
+    const accHolder = req.body.accholder;
+    const updatedBalance = req.body.balance;
+    mongoClient.connect(url,
+        {useNewUrlParser: true, useUnifiedTopology:true},
+        (error, client) => {
+            console.log('connected');
+            let db = client.db('bankstuff');
+            updateBalance(db, accHolder, updatedBalance);
+        })
+    res.send('updated');
+})
+
+
+
 
 //home route of nada
 app.get('/', (req, res) => { res.send('hi') })
