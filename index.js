@@ -22,10 +22,10 @@ let updateBalance = (db, dataToUpdate) => {
     collection.updateOne({accholder: dataToUpdate.accHolder}, {$set: {balance: dataToUpdate.updatedBalance}})
 }
 //function to add amount to balance
-let addBalance = (db, accHolder, addedBal) => {
+let addBalance = (db, addToBalance) => {
     let collection = db.collection('accounts');
-    let newBal = addedBal-0;
-    collection.updateOne({accholder: accHolder}, {$inc: {balance: newBal }})
+    let newBal = addtoBalance.addedBal-0;
+    collection.updateOne({accholder: addToBalance.accHolder}, {$inc: {balance: newBal }})
 }
 
 
@@ -55,8 +55,8 @@ app.put('/accounts/balance', (req, res) => {
     const accHolder = req.body.accholder;
     const updatedBalance = req.body.balance;
     let dataToUpdate = {
-        accholder : accHolder,
-        balance : updatedBalance
+         accHolder,
+         updatedBalance
     }
     mconnection(url, updateBalance, dataToUpdate);
     res.send('updated');
@@ -67,13 +67,11 @@ app.put('/accounts/balance', (req, res) => {
 app.put('/accounts/add', (req, res) => {
     const accHolder = req.body.accholder;
     const addedBal = req.body.balance;
-    mongoClient.connect(url,
-        {useNewUrlParser: true, useUnifiedTopology:true},
-        (error, client) => {
-            console.log('connected');
-            let db = client.db('bankstuff');
-            addBalance(db, accHolder, addedBal);
-        })
+    let addToBalance = {
+        accHolder,
+        addedBal
+    }
+    mconnection(url, addBalance, addToBalance);
     res.send('added');
 })
 
