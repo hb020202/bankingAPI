@@ -1,6 +1,7 @@
 const express = require('express');
 const bodyP = require('body-parser');
 const mongoClient = require('mongodb').MongoClient;
+const mconnection = require('./mongoconn');
 const app = express();
 const port = 3003;
 
@@ -16,9 +17,15 @@ let insertDataInDB = (db, dataToSend) => {
     collection.insertOne(dataToSend);
 }
 //function to change amount in balance
-let updateBalance = (db, accHolder, updatedBalance) => {
+let updateBalance = (db, dataToUpdate) => {
     let collection = db.collection('accounts');
-    collection.updateOne({accholder: accHolder}, {$set: {balance: updatedBalance}})
+    collection.updateOne({accholder: dataToUpdate.accHolder}, {$set: {balance: dataToUpdate.updatedBalance}})
+}
+//function to add amount to balance
+let addBalance = (db, accHolder, addedBal) => {
+    let collection = db.collection('accounts');
+    let newBal = addedBal-0;
+    collection.updateOne({accholder: accHolder}, {$inc: {balance: newBal }})
 }
 
 
@@ -38,31 +45,37 @@ app.post('/accounts', (req, res) => {
         address : newAddress,
         balance : newBalance
     }
-    mongoClient.connect(url,
-        {useNewUrlParser: true, useUnifiedTopology:true},
-        (error, client) => {
-        console.log('connected');
-        let db = client.db('bankstuff');
-        insertDataInDB(db, dataToSend);
-        })
+    mconnection(url, insertDataInDB, dataToSend);
     res.send('inserted');
 })
 
-//route to post new account balance to
-//POST localhost:x/accounts/balance - body - x-www... - key/value - send
+//route to post new account balance
+//PUT localhost:x/accounts/balance - body - x-www... - key/value - send
 app.put('/accounts/balance', (req, res) => {
     const accHolder = req.body.accholder;
     const updatedBalance = req.body.balance;
+    let dataToUpdate = {
+        accholder : accHolder,
+        balance : updatedBalance
+    }
+    mconnection(url, updateBalance, dataToUpdate);
+    res.send('updated');
+})
+
+//route to add to balance
+//PUT localhost:x/accounts/add - body - x-www... - key/value - send
+app.put('/accounts/add', (req, res) => {
+    const accHolder = req.body.accholder;
+    const addedBal = req.body.balance;
     mongoClient.connect(url,
         {useNewUrlParser: true, useUnifiedTopology:true},
         (error, client) => {
             console.log('connected');
             let db = client.db('bankstuff');
-            updateBalance(db, accHolder, updatedBalance);
+            addBalance(db, accHolder, addedBal);
         })
-    res.send('updated');
+    res.send('added');
 })
-
 
 
 
