@@ -1,6 +1,5 @@
 const express = require('express');
 const bodyP = require('body-parser');
-const mongoClient = require('mongodb').MongoClient;
 const mconnection = require('./mongoconn');
 const app = express();
 const port = 3003;
@@ -9,6 +8,7 @@ const port = 3003;
 app.use(bodyP.json());
 app.use(bodyP.urlencoded({extended: false}));
 
+//mongo URL
 const url = "mongodb://root:password@localhost:27017";
 
 //function to add new accounts to db
@@ -29,8 +29,6 @@ let addBalance = (db, addToBalance) => {
 }
 
 
-
-
 //route to post new accounts to
 //POST localhost:x/accounts - body - x-www... - key/value - send
 app.post('/accounts', (req, res) => {
@@ -47,7 +45,6 @@ app.post('/accounts', (req, res) => {
     mconnection(url, insertDataInDB, dataToSend);
     res.send('inserted');
 })
-
 //route to post new account balance
 //PUT localhost:x/accounts/balance - body - x-www... - key/value - send
 app.put('/accounts/balance', (req, res) => {
@@ -60,7 +57,6 @@ app.put('/accounts/balance', (req, res) => {
     mconnection(url, updateBalance, dataToUpdate);
     res.send('updated');
 })
-
 //route to add to balance
 //PUT localhost:x/accounts/add - body - x-www... - key/value - send
 app.put('/accounts/add', (req, res) => {
@@ -73,7 +69,6 @@ app.put('/accounts/add', (req, res) => {
     mconnection(url, addBalance, addToBalance);
     res.send('added');
 })
-
 
 
 //home route of nada
