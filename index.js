@@ -24,10 +24,9 @@ let updateBalance = (db, dataToUpdate) => {
 //function to add amount to balance
 let addBalance = (db, addToBalance) => {
     let collection = db.collection('accounts');
-    let newBal = addtoBalance.addedBal-0;
+    let newBal = addToBalance.addedBal-0;
     collection.updateOne({accholder: addToBalance.accHolder}, {$inc: {balance: newBal }})
 }
-
 
 
 
