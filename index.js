@@ -31,12 +31,8 @@ let updateBalance = (db, dataToUpdate) => {
 let addBalance = (db, addToBalance) => {
     let collection = db.collection('accounts');
     let newBal = addToBalance.addedBal-0;
-    collection.updateOne({accholder: addToBalance.accHolder}, {$inc: {balance: newBal }})
-}//function to show all
-let showAll = (db) => {
-    let collection = db.collection('accounts');
-    collection.updateOne({accholder: addToBalance.accHolder}, {$inc: {balance: newBal }})
-}
+    collection.updateOne({accholder: addToBalance.accHolder}, {$inc: {balance: newBal }})}
+
 
 
 //route to post new accounts to
