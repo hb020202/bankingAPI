@@ -5,11 +5,13 @@ const cors = require('cors');
 const app = express();
 const port = 3003;
 const mongoClient = require('mongodb').MongoClient;
-
+//remember to run nodemon index.js
 
 //gotta setup bodyparser before trying to post so it knows what to expect
 app.use(bodyP.json());
 app.use(bodyP.urlencoded({extended: false}));
+
+//use cors thing so nothing trips up the local api
 app.use(cors());
 
 //mongo URL
@@ -89,7 +91,6 @@ app.get('/viewall', (req, res) => {
             .then(results => {
                 res.send(results)
             })
-
             console.log('connected');
         })})
 
